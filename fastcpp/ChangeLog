@@ -1,0 +1,3 @@
+2005-11-22:
+	1.Modify the configure.in,and can check the apache2's install path.
+	2.Fix the dlsym usage in FCPageFile.cxx.

@@ -1,0 +1,80 @@
+<%!--
+    This file is part of FastCPP.
+
+    FastCPP is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Foobar is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Foobar; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+--%>
+<%@inc "-I/usr/include/"%>
+<%@link "-I/usr/lib/" %>
+<%@comp   "-g -O2" %>
+<%!
+#include <iostream>
+using namespace std;
+static int i = 0;
+%>
+<html>
+<head>
+	<title>Thank you for choicing FastCPP</title>
+</head>
+<body>
+	<%
+		page<<"<B>Hello,FastCPP "<<i++<<"<BR></B>"<<endl;
+		page<<"<B>Thank you for choicing FastCPP<BR></B>"<<endl;
+	%>
+<h3>Test Include</h3><BR>
+<%@include "inc.fc"%>
+<%@include "fastcpp.txt"%>
+<%
+	page<<"page.Include(\"include.txt\")"<<endl;
+ 	page.Include("include.txt");
+%>
+<h3>Test param(GET and POST)</h3><BR>
+<%
+	page<<"Method:"<<(page.GetMethod() == FCRequest::GET ? "GET" : "POST")<<endl;
+	const string &name = page.GetParam("name");
+	if(!name.empty())
+	{
+		page<<"name:"<<name<<"<BR>"<<endl;
+	}
+%>
+<h3>Test Cookie</h3><BR>
+<%
+	const string &c_name = page.GetCookie("name");
+	if(!c_name.empty())
+	{
+		page<<"c_name:"<<c_name<<"<BR>"<<endl;
+	}
+	else
+	{
+		page.SetCookie("name","jinti");
+	}
+%>
+<h3>Test session</h3><BR>
+<%
+	FCString *s = dynamic_cast<FCString *>(page.GetSession("name"));
+	page<<"sessionid:"<<page.GetSessionID()<<"<BR>"<<endl;
+	if(s)
+	{
+		page<<"s_name :"<<s->get()<<endl;
+	}
+	else
+	{
+		string n("jinti.shen  @ gmail.com");
+		s = new FCString(n);
+		page.SetSession("name",s);
+	}
+%>
+</body>
+</html>

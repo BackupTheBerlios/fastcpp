@@ -1,0 +1,74 @@
+/*
+    This file is part of FastCPP.
+
+    FastCPP is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Foobar is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Foobar; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  
+*/
+
+   FastCPP one based on Apache C++ Web development environment,FastCPP can
+developing high-performance Web application for a minute, having offered
+Cookie, session develops and drifts along the function of inlaying HTML
+dynamically.
+
+   Fastcpp program converts Fastcpp scripts to C++ source files by using the mixed syntax of C++ and HTML.
+
+Install:
+      1).Install apache2
+         jinti@heaven:~$tar jxf httpd-2.0.54.tar.bz2
+         jinti@heaven:~$cd httpd-2.0.54
+         jinti@heaven:~/httpd-2.0.54$ ./configure --with-mpm=worker 
+         jinti@heaven:~/httpd-2.0.54$ make && make install
+      2).Install fastcpp
+         jinti@heaven:~$tar jxf fastcpp-0.0.1.tar.gz
+         jinti@heaven:~$cd fastcpp-0.0.1
+         jinti@heaven:~/fastcpp-0.0.1$./configure && make && make install
+	 
+      3).update httpd.conf
+	 Append the follow line httpd.conf:
+ 
+	 LoadModule fastcpp_module modules/mod_fastcpp.so
+	 AddHandler fastcpp-script .fc
+ 
+	 now,you can access FastCPP script .
+    3.Run
+         
+         apachectl -DONE_PROCESS -k start
+
+         # create new file hello.fc into apache2/htdocs:
+
+	jinti@heaven:~$ cat apache2/htdocs/hello.fc
+        <%@inc   "-I/usr/include/"%>
+	<%@link  "-L/usr/lib/" %>
+	<%@comp  "-O2" %>
+	<%!
+	    #include <iostream>
+	    using namespace std;
+	    static int i = 0;
+	 %>
+	 <html>
+	 <head>
+	       <title>Thank you for choicing FastCPP</title>
+         </head>
+         <body>
+	 <%
+		 page<<"<B>Hello,FastCPP "<<i++<<"<BR></B>"<<endl;
+ 	 %>
+         </body>
+         </html>	
+
+        OK,you can access the url:
+        http://localhost/hello.fc 
+  
+        

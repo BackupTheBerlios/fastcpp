@@ -1,0 +1,94 @@
+/*
+    This file is part of FastCPP.
+
+    FastCPP is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Foobar is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Foobar; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  
+*/
+
+FastCPP -- C++ Web Development Environment
+           Powered By Apache2
+
+  Jsp,Asp,Asp.net,Php,Perl,Python,Ruby on Rails,FastCGI, and FastCPP.
+
+  FastCPP是一个基于Apache(现在只支持Apache2)的C++ Web开发环境，利用FastCPP可以快速的开发出高性能的Web应用，提供了Cookie，session还有动态开发以及混嵌HTML的功能。
+  和其他Web开发语言的对比.
+    优势：
+        1).基于C++,拥有STL,Boost以及Loki等强大开发库的支持。
+           FastCPP并不是一个新的脚本语言，只是一个支持混嵌HTML的C++伪代码，通过FastCPP的翻译功能，将FastCPP的代码翻译成c++的源文件，并调用g++编译成动态链接库。所以，你可以直接使用你熟悉的C++语法，使用强大的STL以及直接使用系统调用，拥有比任何一个WEB开发语言更强大的程序库 ;).
+        2).可以提供高性能的WEB服务能力。
+           FastCPP是基于Apache2的Module开发的，由FastCPP的伪文件编译成的动态链接库直接由进程直接使用，在性能上和写module是一样的。理论上性能会远在jsp,php,perl以及fastcgi之上， 因为jsp,php,perl是脚本引擎来执行，而FastCGI是通过FastCGID来维护cgi，将cgi的运行结果通过管道来传给apache2,所以尽管FastCGI可以使用C语言来增加语言本身的性能，但通过管道的传输也会成为FastCGI的瓶颈之一.
+           FastCPP没有明显的性能瓶颈,因为FastCPP的最终的程序都是Apache2进程的一部分，不经过管道之类的传输数据，而是在进程内直接传递，所以比FastCGI有更多的优势。
+        3).快速的开发过程。
+           只要配置好Apache2,写好FastCPP的伪代码放在web目录下就可以直接访问，并得到结果，FastCPP第一次访问时需要编译，所以在速度上会很明显的慢，在第二次访问之后就不需要编译，已经和Apache2的主进程结合成一个进程。
+           FastCPP支持HTML混嵌，可以像编辑HTML一样的编辑FastCPP的页面。而且提供了编译参数的设定，完成可以按照MVC的理念来开发程序，
+        4).完整的功能支持.
+           FastCPP支持cookie和session这两个强大的功能，你可以把你需要的变量存在session里，在两个不同的页面中共享。
+     缺点：
+         1).不支持其他的开发语言，只支持C++语言，默认的编译器是g++. ^^
+         2).受到进程概念的影响。只支持Apache2的Single-Process Multi-Thread的Worker的单进程多线程的工作方式。
+            因为FastCPP依赖的两个全局变量，pages 和 sessions分别是fastcpp的页面缓存和session管理器，如果使用 Multi-Process的话，一但Apache2根据负载情况fork出新的进程，两个进程间的pages和sessions就是两个不同的单元，对sessions的唯一性的破坏是可想而知的，所以就只能选择Single-Process，不过很幸运的是，Worker是apache2推荐的高性能的MPM。
+            或许FastCPP在将来会提供一个功能更强，性能也比较优秀的MPM。
+         3).暂时不支持FastCPP的集群，不过在以后的开发中，会加入这个功能。
+         4).暂时不支持apache1.x,会支持的 :)
+         5).暂时不支持除Linux之外的操作系统,也会支持的。
+         6).现在FastCPP和Apache2是绑定在同一个进程的，所以如果page的内存访问错误会直接导致Apache2的崩溃, :( 这是挺严重的，风险也很大.所以在选择FastCPP，你要自己小心。不过，充分利用C++语言的强大功能，我想很容易避免这些问题的。
+
+    如何获得和安装FastCPP?
+    FastCPP在将来是支持跨平台的,只不过只支持Linux,所以现在，你只能用Linux来使用FastCPP.
+    1.获得源码.
+      FastCPP是遵守GPL的要求而发布的代码。
+      apache2.你需要一份apache2的源码，你可以在httpd.apache.org中下载，我使用的httpd-2.0.54
+      fastcpp.在http://dragon.linux-vs.org/~jinti/fastcpp-0.0.1.tar.gz 中获得。
+    2.安装
+      1).apache2的安装
+         jinti@heaven:~$tar jxf httpd-2.0.54.tar.bz2
+         jinti@heaven:~$cd httpd-2.0.54
+         jinti@heaven:~/httpd-2.0.54$ ./configure --with-mpm=worker 
+         jinti@heaven:~/httpd-2.0.54$ make && make install
+      2).fastcpp的安装
+         jinti@heaven:~$tar jxf fastcpp-0.0.1.tar.gz
+         jinti@heaven:~$cd fastcpp-0.0.1
+         jinti@heaven:~/fastcpp-0.0.1$./configure && make && make install
+         fastcpp安装之后你需要在httpd.conf加上
+	 LoadModule fastcpp_module modules/mod_fastcpp.so
+	 AddHandler fastcpp-script .fc
+         这样，就可以调用扩展名为.fc的fastcpp脚本了.
+    3.运行
+         首先你要运行apache2.
+         ./apachectl -DONE_PROCESS -k start
+         #一定要加上-DONE_PROCESS 否则有可能会产生两个sessionmaps影像，这是错误的。
+         在apache2/htdocs 下建一个hello.fc
+
+	jinti@heaven:~$ cat apache2/htdocs/hello.fc
+        <%@inc   "-I/usr/include/"%>
+	<%@link  "-L/usr/lib/" %>
+	<%@comp  "-O2" %>
+	<%!
+	    #include <iostream>
+	    using namespace std;
+	    static int i = 0;
+	 %>
+	 <html>
+	 <head>
+	       <title>Thank you for choicing FastCPP</title>
+         </head>
+         <body>
+	 <%
+		 page<<"<B>Hello,FastCPP "<<i++<<"<BR></B>"<<endl;
+ 	 %>
+         </body>
+         </html>	
+        打开你的浏览器访问http://127.0.0.1/hello.fc就可以看到运行结果了.
+        
