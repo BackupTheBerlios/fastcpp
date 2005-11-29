@@ -1,0 +1,34 @@
+AC_INIT(src/mod_fastcpp.cxx)
+
+
+
+AC_DEFUN([FC_CHECK_APACHE2],[
+
+AC_ARG_WITH( apache2,
+      [  --with-apache2      Set prefix where apache2 can be found (ex:/usr/apach2 or /usr/local/apache2)[default=/usr/local/apache2] ],
+      [ apache2_prefix=${withval}],[ apache2_prefix=/usr/local/apache2 ])
+AC_SUBST(apache2_prefix)
+
+
+APACHE_CFLAGS="-I$apache2_prefix/include"
+
+dnl check apache2 headers
+CPPFLAGS_save=$CPPFLAGS
+CPPFLAGS=$APACHE_CFLAGS
+AC_CHECK_HEADER([httpd.h], ,AC_MSG_ERROR([Could not find $apache2_prefix/httpd.h headers !]))
+CPPFLAGS=$CPPFLAGS_save
+
+AC_SUBST(APACHE_CFLAGS)
+])
+
+
+
+
+AM_INIT_AUTOMAKE(fastcpp,0.0.1)
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+FC_CHECK_APACHE2
+AC_OUTPUT(Makefile src/Makefile)
